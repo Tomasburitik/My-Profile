@@ -1,0 +1,164 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "neuroclaim"
+version = "2.1.0"
+description = "Autonomous AI Agent for End-to-End Insurance Claims Processing"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Your Name", email = "hello@yourname.dev" }]
+keywords = ["machine-learning", "llm", "agents", "insurance", "rag", "mlops"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.11"
+dependencies = [
+    # Core ML
+    "torch>=2.2.0",
+    "transformers>=4.40.0",
+    "accelerate>=0.29.0",
+    "peft>=0.10.0",
+
+    # LLM Orchestration
+    "langchain>=0.2.0",
+    "langgraph>=0.1.0",
+    "langchain-openai>=0.1.0",
+    "openai>=1.25.0",
+
+    # RAG & Vector DB
+    "llama-index>=0.10.0",
+    "llama-index-vector-stores-qdrant>=0.2.0",
+    "qdrant-client>=1.9.0",
+    "rank-bm25>=0.2.2",
+    "sentence-transformers>=3.0.0",
+
+    # Serving
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.29.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+
+    # Data & Storage
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "psycopg2-binary>=2.9.0",
+    "redis>=5.0.0",
+    "boto3>=1.34.0",
+
+    # Observability
+    "prometheus-client>=0.20.0",
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+    "opentelemetry-instrumentation-fastapi>=0.45b0",
+    "structlog>=24.1.0",
+
+    # Config
+    "hydra-core>=1.3.2",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "pytest-timeout>=2.3.0",
+    "httpx>=0.27.0",
+    "factory-boy>=3.3.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "black>=24.4.0",
+    "isort>=5.13.0",
+    "pre-commit>=3.7.0",
+]
+eval = [
+    "wandb>=0.17.0",
+    "datasets>=2.19.0",
+    "evaluate>=0.4.0",
+    "scikit-learn>=1.4.0",
+]
+
+[project.urls]
+Homepage = "https://yourname.dev/projects/neuroclaim"
+Documentation = "https://neuroclaim.yourname.dev/docs"
+Repository = "https://github.com/yourname/neuroclaim"
+"Bug Tracker" = "https://github.com/yourname/neuroclaim/issues"
+Changelog = "https://github.com/yourname/neuroclaim/blob/main/CHANGELOG.md"
+
+[project.scripts]
+neuroclaim = "neuroclaim.cli:main"
+
+# ─── Tooling Configuration ──────────────────────────────
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # flake8-bugbear
+    "C4",       # flake8-comprehensions
+    "SIM",      # flake8-simplify
+    "TCH",      # flake8-type-checking
+    "ANN",      # flake8-annotations (type hints)
+    "PT",       # flake8-pytest-style
+    "RUF",      # ruff-specific rules
+]
+ignore = ["ANN101", "ANN102"]
+
+[tool.ruff.per-file-ignores]
+"tests/**" = ["ANN", "S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = false
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = [
+    "--strict-markers",
+    "--tb=short",
+    "-ra",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: integration tests requiring external services",
+    "behavioral: ML behavioral/invariance tests",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/migrations/*"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
